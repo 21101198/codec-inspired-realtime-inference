@@ -1,0 +1,7 @@
+scenario,mode,fps_run1,fps_run2,fps_mean,p99_ms_mean,iou_match_pct,iou_below_0.5_pct,infer_frame_pct,i_pct,s_pct,p_pct
+highspeed,frame,182.5,177.9,180.2,17.79,84.2,15.7,24.0,24.0,0.0,76.0
+highspeed,object,182.1,195.0,188.6,17.12,84.5,15.3,26.7,24.0,2.7,73.3
+crowd,frame,199.0,151.2,175.1,18.41,75.0,19.0,31.7,31.7,0.0,68.3
+crowd,object,157.5,168.7,163.1,16.81,77.0,17.3,48.3,32.7,15.7,51.7
+lowlight,frame,203.0,202.1,202.6,17.2,71.4,16.3,20.0,20.0,0.0,80.0
+lowlight,object,150.3,160.8,155.5,19.26,71.3,16.3,24.0,20.0,4.0,76.0

@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+
+# PyTorch / model weights & exports (large binaries, not source)
+*.pt
+*.pth
+*.onnx
+*.engine
+trt_cache/
+trt_cache*/
+_calib_aug/
+yolov5s_calib.*
+
+# Large media / datasets
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Editor / tool state
+.vscode/
+.idea/
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store

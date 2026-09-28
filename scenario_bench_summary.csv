@@ -1,0 +1,4 @@
+﻿scenario,key,frames,base_mean_ms,base_p50,base_p90,base_p99,base_fps,sched_mean_ms,sched_p50,sched_p90,sched_p99,sched_fps,speedup_x,i_ratio_pct
+고속 동작 (High-speed Motion),highspeed,300,6.407,5.744,7.785,14.044,156.09,1.557,0.208,5.745,8.315,642.43,4.116,23.7
+저조도 (Low-light),lowlight,300,6.520,6.104,8.214,11.816,153.37,1.517,0.214,6.581,7.974,659.11,4.297,20.0
+군중 (Crowd),crowd,300,6.491,5.889,8.660,14.017,154.06,2.268,0.234,7.088,9.077,440.93,2.862,31.3

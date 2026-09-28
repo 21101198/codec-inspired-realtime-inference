@@ -1,0 +1,5 @@
+config,streams,frames_per_stream,wall_s,fps_aggregate,fps_per_camera,i_ratio_pct
+baseline_1stream,1,200,1.529,130.83,130.83,
+baseline_Nstream,4,200,5.763,138.82,34.71,
+scheduler_1stream,1,200,0.504,396.77,396.77,20.0
+scheduler_Nstream,4,200,1.544,517.99,129.5,20.2
