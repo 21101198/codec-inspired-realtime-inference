@@ -99,6 +99,11 @@ python pipeline.py --source 0 --model yolov5s.pt --frames 500 --output latency_l
 `q` 키로 중간 종료할 수 있으며, 종료 시 CSV 저장과 함께 P50/P90/P99/FPS 등
 콘솔 요약이 출력됩니다.
 
+`--record demo.mp4`를 붙이면 처리한 모든 프레임을 실시간 통계 패널(I/P 종류, 지연, P50/P99,
+처리 FPS)과 함께 영상으로 저장합니다. 시연 영상용 옵션이며, 저장은 지연 측정 이후에 하므로
+프레임별 측정값에는 포함되지 않습니다(단, 인코딩 부하로 전체 FPS는 다소 낮아질 수 있음).
+`--no-show`를 붙이면 영상 창 없이 실행합니다.
+
 ### PyQt6 대시보드 실행
 
 ```bash

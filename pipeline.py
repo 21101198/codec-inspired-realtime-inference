@@ -146,8 +146,11 @@ class RealtimePipeline:
 
     def __init__(self, model_path="yolov5s.pt", source=0,
                  max_frames=500, output_csv="latency_log.csv", conf_threshold=0.4,
-                 model_type=None, mode="frame"):
+                 model_type=None, mode="frame", record_path=None, show=True):
         self.max_frames = max_frames
+        self.record_path = record_path   # 시연 영상 저장 경로 (None이면 저장 안 함)
+        self.show = show
+        self.writer = None
         self.mode = mode
         self.output_csv = output_csv
         self.conf_threshold = conf_threshold
@@ -366,16 +369,67 @@ class RealtimePipeline:
             if alert:
                 cv2.putText(frame_bgr, "ALERT: Tail Latency!",
                             (10, 65), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            cv2.imshow("Pipeline", frame_bgr)
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
+            if self.record_path:
+                self._record_frame(frame_bgr, lat, i_count, p_count, s_count, alert_count)
+            if self.show:
+                cv2.imshow("Pipeline", frame_bgr)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
 
             frame_idx += 1
 
         self._finalize(i_count, p_count, alert_count, s_count)
 
+    def _record_frame(self, frame_bgr, lat, i_count, p_count, s_count, alert_count):
+        """시연 영상용: 처리한 프레임 옆에 실시간 통계 패널을 붙여 저장.
+        지연 측정이 끝난 뒤 호출되므로 측정값에는 영향이 없다."""
+        h, w = frame_bgr.shape[:2]
+        pw = 420
+        panel = np.full((h, pw, 3), 30, dtype=np.uint8)
+        totals = [l.total_ms for l in self.log]
+        n = len(totals)
+        p50 = float(np.percentile(totals, 50)) if n else 0.0
+        p99 = float(np.percentile(totals, 99)) if n >= 2 else 0.0
+        fps = 1000.0 / float(np.mean(totals)) if n else 0.0
+        ft = lat.frame_type
+        ft_color = {"P": (0, 200, 0), "S": (0, 165, 255)}.get(ft, (0, 140, 255))
+        rows = [
+            ("Frame", f"{lat.frame_idx}", (230, 230, 230)),
+            ("Frame type", f"{ft}-frame", ft_color),
+            ("Latency", f"{lat.total_ms:.2f} ms", (230, 230, 230)),
+            ("Infer", f"{lat.infer_ms:.2f} ms", (230, 230, 230)),
+            ("P50", f"{p50:.2f} ms", (230, 230, 230)),
+            ("P99 (tail)", f"{p99:.2f} ms", (80, 80, 255)),
+            ("Processing FPS", f"{fps:.1f}", (255, 200, 80)),
+            ("I / P" + (" / S" if self.mode == "object" else ""),
+             f"{i_count} / {p_count}" + (f" / {s_count}" if self.mode == "object" else ""), (230, 230, 230)),
+            ("Alerts", f"{alert_count}", (230, 230, 230)),
+        ]
+        y = 50
+        cv2.putText(panel, "Codec-Inspired Pipeline", (18, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2)
+        y += 20
+        cv2.line(panel, (18, y), (pw - 18, y), (90, 90, 90), 1)
+        for label, val, col in rows:
+            y += 62
+            cv2.putText(panel, label, (18, y - 28), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (150, 150, 150), 1)
+            cv2.putText(panel, val, (18, y), cv2.FONT_HERSHEY_SIMPLEX, 0.95, col, 2)
+        cv2.putText(panel, f"mode: {self.mode}", (18, h - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (150, 150, 150), 1)
+        cv2.putText(panel, "orange=I (new)  green=P (reuse)", (18, h - 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150, 150, 150), 1)
+        out = np.hstack([frame_bgr, panel])
+        if self.writer is None:
+            src_fps = self.cap.get(cv2.CAP_PROP_FPS) or 30.0
+            if not (1.0 <= src_fps <= 120.0):
+                src_fps = 30.0
+            self.writer = cv2.VideoWriter(self.record_path, cv2.VideoWriter_fourcc(*"mp4v"),
+                                          src_fps, (out.shape[1], out.shape[0]))
+            print(f"[Pipeline] 시연 영상 저장 시작 -> {self.record_path} ({src_fps:.1f} fps)")
+        self.writer.write(out)
+
     def _finalize(self, i_count, p_count, alert_count, s_count=0):
         self.cap.release()
+        if self.writer is not None:
+            self.writer.release()
+            print(f"[Pipeline] 시연 영상 저장 완료 -> {self.record_path}")
         cv2.destroyAllWindows()
 
         if not self.log:
@@ -444,6 +498,9 @@ if __name__ == "__main__":
     parser.add_argument("--conf",   type=float, default=0.4)
     parser.add_argument("--mode",   type=str, choices=["object", "frame"], default="frame",
                          help="object: 객체별 속도 기반 선택 추론, frame: 프레임 단위 I/P")
+    parser.add_argument("--record", type=str, default=None,
+                         help="처리한 프레임과 실시간 통계를 mp4로 저장 (시연 영상용, 측정값에 영향 없음)")
+    parser.add_argument("--no-show", action="store_true", help="영상 창을 띄우지 않음")
     args = parser.parse_args()
 
     source = int(args.source) if args.source.isdigit() else args.source
@@ -461,5 +518,7 @@ if __name__ == "__main__":
         conf_threshold=args.conf,
         model_type=model_type,
         mode=args.mode,
+        record_path=args.record,
+        show=not args.no_show,
     )
     pipeline.run()
