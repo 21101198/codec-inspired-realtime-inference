@@ -8,8 +8,11 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from pathlib import Path
 
+from matplotlib import font_manager
+_installed = {f.name for f in font_manager.fontManager.ttflist}
+_fonts = [f for f in ("Malgun Gothic", "AppleGothic", "Noto Sans CJK KR") if f in _installed] + ["DejaVu Sans"]
 plt.rcParams.update({
-    "font.family": ["Malgun Gothic", "AppleGothic", "Noto Sans CJK KR", "DejaVu Sans"],
+    "font.family": _fonts,
     "axes.unicode_minus": False,
     "font.size": 12,
     "axes.titlesize": 14,

@@ -112,6 +112,17 @@ python pipeline.py --source 0 --model yolov5s.pt --frames 500 --output latency_l
 프레임별 측정값에는 포함되지 않습니다(단, 인코딩 부하로 전체 FPS는 다소 낮아질 수 있음).
 `--no-show`를 붙이면 영상 창 없이 실행합니다.
 
+### Baseline vs 제안 방식 비교 실험
+
+```bash
+python baseline.py --source sample_video.mp4 --frames 200 --output baseline_log.csv
+python pipeline.py --source sample_video.mp4 --frames 200 --output latency_log.csv --no-show
+python compare_plot.py baseline_log.csv latency_log.csv .
+```
+
+같은 영상을 모든 프레임 추론(Baseline)과 I/P 스케줄러로 각각 처리한 뒤, 지연 분포·P50/P90/P99·
+타임라인·FPS 비교 그래프(01~04_*.png)와 비교표를 출력합니다.
+
 ### PyQt6 대시보드 실행
 
 ```bash

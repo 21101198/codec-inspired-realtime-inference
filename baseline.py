@@ -35,13 +35,9 @@ class BaselinePipeline:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"[Baseline] 디바이스: {self.device.upper()}")
 
-        try:
-            self.model = torch.hub.load("ultralytics/yolov5", "custom",
-                                        path=model_path, verbose=False)
-        except Exception:
-            print("[Baseline] yolov5s 기본 모델 로드")
-            self.model = torch.hub.load("ultralytics/yolov5", "yolov5s",
-                                        verbose=False)
+        # 제안 방법(pipeline.py)과 같은 로더 사용: yolov5/ 폴더가 있으면 오프라인 로드
+        from model_loader import load_yolov5
+        self.model = load_yolov5(model_path)
         self.model.to(self.device)
         self.model.conf = conf_threshold
 
