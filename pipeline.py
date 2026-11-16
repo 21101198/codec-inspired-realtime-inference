@@ -253,6 +253,7 @@ class RealtimePipeline:
     def run(self):
         print(f"\n[Pipeline] 실행 시작 | 최대 프레임: {self.max_frames}\n")
         frame_idx = 0
+        last_shown = None
         i_count = 0
         s_count = 0
         p_count = 0
@@ -373,11 +374,22 @@ class RealtimePipeline:
                 self._record_frame(frame_bgr, lat, i_count, p_count, s_count, alert_count)
             if self.show:
                 cv2.imshow("Pipeline", frame_bgr)
+                last_shown = frame_bgr
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
 
             frame_idx += 1
 
+        # 처리가 끝났음을 영상 창에 표시하고 잠시 보여준 뒤 닫음 (측정 종료 후라 결과에 영향 없음)
+        if self.show and last_shown is not None:
+            done = last_shown.copy()
+            h = done.shape[0]
+            cv2.rectangle(done, (0, h - 60), (done.shape[1], h), (0, 0, 0), -1)
+            cv2.putText(done, f"DONE: {frame_idx} frames processed - see console for results",
+                        (12, h - 22), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+            cv2.imshow("Pipeline", done)
+            cv2.waitKey(2000)
+        print(f"\n[Pipeline] 처리 완료: {frame_idx}프레임 (영상 끝 또는 --frames 도달). 영상 창은 자동으로 닫힙니다.")
         self._finalize(i_count, p_count, alert_count, s_count)
 
     def _record_frame(self, frame_bgr, lat, i_count, p_count, s_count, alert_count):
@@ -431,6 +443,7 @@ class RealtimePipeline:
             self.writer.release()
             print(f"[Pipeline] 시연 영상 저장 완료 -> {self.record_path}")
         cv2.destroyAllWindows()
+        cv2.waitKey(1)  # Windows에서 창이 실제로 닫히도록 이벤트 처리
 
         if not self.log:
             print("[Pipeline] 기록 없음")
