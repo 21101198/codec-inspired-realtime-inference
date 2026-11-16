@@ -23,6 +23,7 @@ core.py              # 순수 로직 (FrameLatency, SceneChangeDetector, Schedul
 pipeline.py           # CLI 배치 실행 (cv2.imshow 기반 실시간 파이프라인)
 pipeline_worker.py    # core.py 로직을 감싸는 QThread 워커 (PyQt6 대시보드용)
 main_window.py         # PyQt6 메인 윈도우 (비디오 프리뷰 + 실시간 통계 대시보드)
+player.py              # 영상 플레이어 형태의 통합 실행 화면 (방식 전환 · 비교 실험)
 model_loader.py        # YOLOv5 로더 (같은 폴더에 yolov5/ 코드가 있으면 오프라인으로 로드)
 object_level_scheduler.py  # 객체 단위 선택적 추론(OL-SCS, pipeline.py --mode object)
 
@@ -111,6 +112,18 @@ python pipeline.py --source 0 --model yolov5s.pt --frames 500 --output latency_l
 처리 FPS)과 함께 영상으로 저장합니다. 시연 영상용 옵션이며, 저장은 지연 측정 이후에 하므로
 프레임별 측정값에는 포함되지 않습니다(단, 인코딩 부하로 전체 FPS는 다소 낮아질 수 있음).
 `--no-show`를 붙이면 영상 창 없이 실행합니다.
+
+### 통합 플레이어 (권장)
+
+```bash
+python player.py
+```
+
+영상 플레이어 형태의 실행 화면입니다. 오른쪽 목록에서 영상을 고르면 탐지 박스를 그리며 재생하고,
+재생 중에 **제안 방식(I/P 스케줄러) / 기존 방식(매 프레임 추론)** 을 바꿔 FPS·P50·P99 변화를 바로
+비교할 수 있습니다. **[비교 실험 시작]** 은 아래 비교 실험(baseline.py → pipeline.py → compare_plot.py)을
+그대로 실행하고 결과표와 그래프를 창에 보여줍니다. 같은 폴더(또는 상위 폴더)의 `sample_video.mp4`,
+`원본실험영상/` 이 있으면 목록에 자동으로 추가됩니다.
 
 ### Baseline vs 제안 방식 비교 실험
 
