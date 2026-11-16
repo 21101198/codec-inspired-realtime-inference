@@ -1,4 +1,5 @@
 """베이스라인: 스케줄러 없이 모든 프레임 전체 추론."""
+import os
 import cv2
 import torch
 import numpy as np
@@ -101,6 +102,8 @@ class BaselinePipeline:
             print("[Baseline] 기록 없음")
             return
 
+        out_dir = os.path.dirname(os.path.abspath(self.output_csv))
+        os.makedirs(out_dir, exist_ok=True)
         with open(self.output_csv, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["frame_idx", "preprocess_ms", "htod_ms",

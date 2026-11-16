@@ -14,6 +14,7 @@
 import collections
 import csv
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -104,6 +105,13 @@ def video_info(path):
         x0 = (frame.shape[1] - tw) // 2
         thumb = bgr_to_qimage(frame[y0:y0 + th, x0:x0 + tw].copy())
     return n, fps, thumb
+
+
+def safe_folder_name(path):
+    """결과 폴더 이름: Windows에서 쓸 수 없는 문자와 끝의 공백·마침표를 정리."""
+    stem = os.path.splitext(os.path.basename(path))[0]
+    stem = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", stem).strip().rstrip(". ")
+    return stem or "video"
 
 
 def fmt_time(sec):
@@ -1015,8 +1023,7 @@ class PlayerWindow(QMainWindow):
             return
         name, path = self.current
         frames = min(EXPERIMENT_FRAMES, self.total_frames) if self.total_frames else EXPERIMENT_FRAMES
-        stem = os.path.splitext(os.path.basename(path))[0]
-        out_dir = os.path.join(HERE, "실험결과", stem)
+        out_dir = os.path.join(HERE, "실험결과", safe_folder_name(path))
         self.engine.command("pause")
         self._set_playing(False)
         self.runner = ExperimentRunner(path, frames, out_dir)
