@@ -21,6 +21,7 @@ core.py              # 순수 로직 (FrameLatency, SceneChangeDetector, Schedul
 pipeline.py           # CLI 배치 실행 (cv2.imshow 기반 실시간 파이프라인)
 pipeline_worker.py    # core.py 로직을 감싸는 QThread 워커 (PyQt6 대시보드용)
 main_window.py         # PyQt6 메인 윈도우 (비디오 프리뷰 + 실시간 통계 대시보드)
+model_loader.py        # YOLOv5 로더 (같은 폴더에 yolov5/ 코드가 있으면 오프라인으로 로드)
 
 baseline.py           # 기준(baseline) 성능 측정
 bench_4k.py           # 해상도별(360p/1080p/4K) 추론 속도 벤치마크
@@ -107,6 +108,18 @@ python main_window.py
 창에서 소스(웹캠 인덱스 또는 영상 경로)/모델 경로/conf/frames를 입력하고
 **시작**을 누르면 비디오 프리뷰와 실시간 통계(P50/P90/P99, I/P 프레임 수,
 alert 횟수)가 갱신됩니다. **정지**로 언제든 중단할 수 있습니다.
+
+영상에는 탐지 박스가 프레임 종류별 색으로 표시됩니다. I-frame에서 새로 추론한
+박스는 **주황색**, P-frame에서 직전 결과를 재사용한 박스는 **초록색**입니다.
+박스는 지연 측정이 끝난 뒤에 그리므로 측정값에는 영향이 없습니다.
+
+### 오프라인 실행 (인터넷 없는 PC)
+
+기본적으로 YOLOv5 코드는 `torch.hub`로 GitHub에서 내려받습니다. 인터넷이 없는
+PC에서 실행하려면, 인터넷이 되는 PC에서 한 번 실행한 뒤
+`~/.cache/torch/hub/ultralytics_yolov5_master` 폴더를 이 저장소 폴더에
+`yolov5`라는 이름으로 복사하고 `yolov5s.pt`를 같이 두면 됩니다.
+`model_loader.py`가 `yolov5/` 폴더를 먼저 찾아 오프라인으로 로드합니다.
 
 ### 벤치마크 / 분석 스크립트
 

@@ -156,18 +156,16 @@ class RealtimePipeline:
         print(f"[Pipeline] 모델 로딩 중... (type={self.model_type})")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"[Pipeline] 디바이스: {self.device.upper()}")
+        if self.device == "cpu":
+            print("[Pipeline] NVIDIA GPU(CUDA)를 찾지 못해 CPU 모드로 실행합니다. 속도가 매우 느릴 수 있습니다.")
 
         if self.model_type == "yolov8":
             from ultralytics import YOLO
             self.model = YOLO(model_path)
             self.model.to(self.device)
         else:
-            try:
-                self.model = torch.hub.load("ultralytics/yolov5", "custom",
-                                            path=model_path, verbose=False)
-            except Exception:
-                print("[Pipeline] yolov5s 기본 모델 로드")
-                self.model = torch.hub.load("ultralytics/yolov5", "yolov5s", verbose=False)
+            from model_loader import load_yolov5
+            self.model = load_yolov5(model_path)
             self.model.to(self.device)
             self.model.conf = conf_threshold
 
@@ -353,6 +351,12 @@ class RealtimePipeline:
                     f"P99={stats.get('p99_ms', 0):.1f}ms"
                 )
 
+            # 탐지 박스 표시 (지연 측정 이후라 측정값에 영향 없음)
+            # I-frame: 새로 추론한 박스(주황) / P-frame: 직전 결과 재사용 박스(초록)
+            box_color = (0, 200, 0) if frame_type == "P" else (0, 140, 255)
+            for b in boxes:
+                x0, y0, x1, y1 = (int(v) for v in b[:4])
+                cv2.rectangle(frame_bgr, (x0, y0), (x1, y1), box_color, 2)
             if plan is not None and frame_type == "S":
                 for x0, y0, x1, y1 in plan.rois:
                     cv2.rectangle(frame_bgr, (x0, y0), (x1, y1), (0, 165, 255), 2)

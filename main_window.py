@@ -1,5 +1,5 @@
 """PipelineWorker를 구동하는 PyQt6 실시간 비디오/벤치마크 대시보드 메인 윈도우."""
-
+import os
 import sys
 
 from PyQt6.QtCore import Qt
@@ -64,7 +64,9 @@ class MainWindow(QMainWindow):
     def _build_controls(self) -> QHBoxLayout:
         layout = QHBoxLayout()
 
-        self.source_input = QLineEdit("0")
+        # 샘플 영상이 있으면 기본 입력으로, 없으면 웹캠(0)
+        sample = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sample_dashcam.mp4")
+        self.source_input = QLineEdit("sample_dashcam.mp4" if os.path.exists(sample) else "0")
         self.source_input.setPlaceholderText("웹캠 index 또는 영상 경로")
         self.model_input = QLineEdit("yolov5s.pt")
 

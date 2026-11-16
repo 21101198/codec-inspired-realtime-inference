@@ -56,11 +56,8 @@ class PipelineWorker(QThread):
 
     def _load_model(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        try:
-            self.model = torch.hub.load("ultralytics/yolov5", "custom",
-                                        path=self.model_path, verbose=False)
-        except Exception:
-            self.model = torch.hub.load("ultralytics/yolov5", "yolov5s", verbose=False)
+        from model_loader import load_yolov5
+        self.model = load_yolov5(self.model_path)
         self.model.to(self.device)
         self.model.conf = self.conf_threshold
 
@@ -155,6 +152,13 @@ class PipelineWorker(QThread):
             lat.compute_total()
             self.log.append(lat)
             self.predictor.update(lat.total_ms)
+
+            # 탐지 박스 표시 (지연 측정 이후라 측정값에 영향 없음)
+            # I-frame: 새로 추론한 박스(주황) / P-frame: 직전 결과 재사용 박스(초록)
+            box_color = (0, 200, 0) if frame_type == "P" else (0, 140, 255)
+            for b in boxes:
+                x0, y0, x1, y1 = (int(v) for v in b[:4])
+                cv2.rectangle(frame_bgr, (x0, y0), (x1, y1), box_color, 2)
 
             color = (0, 200, 0) if frame_type == "P" else (0, 80, 255)
             cv2.putText(frame_bgr, f"{frame_type}-frame {lat.total_ms:.1f}ms",
