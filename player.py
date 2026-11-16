@@ -499,12 +499,19 @@ class ResultDialog(QDialog):
 
         cards = QHBoxLayout()
         cards.setSpacing(12)
+        def change(before, after, higher_better):
+            r = after / max(before, 1e-6) if higher_better else before / max(after, 1e-6)
+            if r >= 1.05:
+                return (f"{r:.1f}배 빠름" if higher_better else f"{r:.1f}배 감소"), GREEN
+            if r <= 0.95:
+                return (f"{1 / r:.1f}배 느림" if higher_better else f"{1 / r:.1f}배 증가"), "#f87171"
+            return "비슷함", MUTED
         cards.addWidget(self._card("처리 속도 (FPS)", f"{b['fps']:.0f} → {o['fps']:.0f}",
-                                   f"{o['fps'] / b['fps']:.1f}배 빠름", GREEN))
+                                   *change(b['fps'], o['fps'], True)))
         cards.addWidget(self._card("P50 지연 (보통 프레임)", f"{b['p50']:.1f} → {o['p50']:.1f} ms",
-                                   f"{b['p50'] / max(o['p50'], 1e-6):.1f}배 감소", GREEN))
+                                   *change(b['p50'], o['p50'], False)))
         cards.addWidget(self._card("P99 지연 (가장 느린 1%)", f"{b['p99']:.1f} → {o['p99']:.1f} ms",
-                                   f"{b['p99'] / max(o['p99'], 1e-6):.1f}배 감소", ACCENT))
+                                   *change(b['p99'], o['p99'], False)))
         cards.addWidget(self._card("GPU 추론한 프레임 (I-frame)", f"100% → {o['i_ratio'] * 100:.0f}%",
                                    f"{(1 - o['i_ratio']) * 100:.0f}%는 직전 결과 재사용", ORANGE))
         lay.addLayout(cards)
