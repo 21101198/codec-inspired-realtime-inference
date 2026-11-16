@@ -5,6 +5,8 @@ YOLOv5 기반 실시간 4K 영상 객체 탐지 파이프라인. 비디오 코�
 스킵하고 직전 결과를 재사용함으로써 지연시간(latency)을 줄이는 실험 프로젝트입니다.
 CLI 배치 도구와 PyQt6 실시간 대시보드 두 가지 실행 방식을 제공합니다.
 
+**시연 영상**: https://youtu.be/_5iaqo70-LU (교차로·야간·고속 영상 처리 + PyQt6 대시보드, 61초)
+
 ## 주요 기능
 
 - **Scene Change Detection**: 픽셀 diff + 이전 confidence 기반으로 장면 변화 점수 계산
