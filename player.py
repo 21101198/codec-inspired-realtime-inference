@@ -75,11 +75,16 @@ def default_playlist():
         items.append(("교차로 샘플", sample))
     vdir = find_original_video_dir()
     if vdir:
-        for key, name in (("crowd", "교차로 (원본)"), ("lowlight", "야간 저조도"),
-                          ("highspeed", "고속 동작")):
+        known = {"crowd": "교차로 (원본)", "lowlight": "야간 저조도",
+                 "highspeed": "고속 동작", "test_4k": "4K 실험 영상 (3840x2160)"}
+        for key, name in known.items():
             p = os.path.join(vdir, f"{key}.mp4")
             if os.path.exists(p):
                 items.append((name, p))
+        for f in sorted(os.listdir(vdir)):
+            stem, ext = os.path.splitext(f)
+            if ext.lower() in (".mp4", ".avi", ".mov", ".mkv") and stem not in known:
+                items.append((stem, os.path.join(vdir, f)))
     return items
 
 
