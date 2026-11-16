@@ -43,8 +43,6 @@ def compute_stats(values: list) -> dict:
 def plot_timeline(rows: list, out_path: str):
     frames = [r["frame_idx"] for r in rows]
     totals = [r["total_ms"]  for r in rows]
-    types  = [r["frame_type"] for r in rows]
-    alerts = [r["alert"]      for r in rows]
 
     fig, ax = plt.subplots(figsize=(14, 5))
 
@@ -103,10 +101,10 @@ def plot_breakdown(rows: list, out_path: str):
     w = 0.5
     fig, ax = plt.subplots(figsize=(7, 5))
 
-    b1 = ax.bar(x, pre,   w, label="전처리 (Preprocess)",   color="#5B9BD5")
-    b2 = ax.bar(x, htod,  w, bottom=pre,                    label="HtoD 전송",          color="#ED7D31")
-    b3 = ax.bar(x, infer, w, bottom=np.add(pre, htod),      label="GPU 추론 (Infer)",   color="#A9D18E")
-    b4 = ax.bar(x, dtoh,  w, bottom=np.add(np.add(pre, htod), infer), label="DtoH 전송", color="#FFC000")
+    ax.bar(x, pre,   w, label="전처리 (Preprocess)",   color="#5B9BD5")
+    ax.bar(x, htod,  w, bottom=pre,                    label="HtoD 전송",          color="#ED7D31")
+    ax.bar(x, infer, w, bottom=np.add(pre, htod),      label="GPU 추론 (Infer)",   color="#A9D18E")
+    ax.bar(x, dtoh,  w, bottom=np.add(np.add(pre, htod), infer), label="DtoH 전송", color="#FFC000")
 
     totals_bar = [p+h+i+d for p,h,i,d in zip(pre, htod, infer, dtoh)]
     for xi, tv in zip(x, totals_bar):
@@ -213,7 +211,7 @@ if __name__ == "__main__":
     plot_tail_distribution(rows, str(out_dir / "03_tail_distribution.png"))
     print_ablation(rows)
 
-    print(f"\n[Analyzer] 완료! 그래프 3개가 저장되었습니다.")
+    print("\n[Analyzer] 완료! 그래프 3개가 저장되었습니다.")
     print(f"  → {out_dir}/01_latency_timeline.png")
     print(f"  → {out_dir}/02_segment_breakdown.png")
     print(f"  → {out_dir}/03_tail_distribution.png")

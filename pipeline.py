@@ -466,7 +466,7 @@ class RealtimePipeline:
         print(f"  P-frame 횟수    : {p_count}  ({p_count/len(self.log)*100:.1f}%)")
         print(f"  경보 발령 횟수   : {alert_count}")
         print("-"*60)
-        print(f"  Total Latency")
+        print("  Total Latency")
         print(f"    P50  : {np.percentile(totals,50):.2f} ms")
         print(f"    P90  : {np.percentile(totals,90):.2f} ms")
         print(f"    P99  : {np.percentile(totals,99):.2f} ms  <- Tail Latency")

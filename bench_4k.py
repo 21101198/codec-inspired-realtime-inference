@@ -1,7 +1,6 @@
 import cv2, time, numpy as np, torch
-from pathlib import Path
 
-VIDEO_4K = r"C:\Users\USER\OneDrive\Desktop\proj2\test_4k.mp4"
+VIDEO_4K = "test_4k.mp4"
 N_FRAMES = 500
 
 def load_model():

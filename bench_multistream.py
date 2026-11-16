@@ -32,7 +32,7 @@ from core import (
     CodecInspiredScheduler,
 )
 
-VIDEO_PATH = r"C:\Users\USER\OneDrive\Desktop\proj2\test_4k.mp4"
+VIDEO_PATH = "test_4k.mp4"
 MODEL_PATH = "yolov5s.pt"
 CONF_THRESHOLD = 0.4
 ALERT_THRESHOLD_MS = 50.0
@@ -248,7 +248,7 @@ def main():
     print(f"  wall={wall_base_4:.2f}s  aggregate fps={n*args.frames/wall_base_4:.1f}  "
           f"per-cam fps={n*args.frames/wall_base_4/n:.1f}")
 
-    print(f"\n[3/4] 단일 스트림 I/P-frame 스케줄러...")
+    print("\n[3/4] 단일 스트림 I/P-frame 스케줄러...")
     out = {}
     t0 = time.perf_counter()
     run_stream_scheduler(0, cam_frames[0], model, device, gpu_lock, out)
@@ -363,7 +363,7 @@ def plot_results(r):
                  fontsize=10, fontweight="bold")
     ax2.set_xticks(x2)
     ax2.set_xticklabels(labels2, fontsize=10)
-    ax2.set_ylabel(f"Throughput Scaling (x of 1-stream, 1 GPU)")
+    ax2.set_ylabel("Throughput Scaling (x of 1-stream, 1 GPU)")
     ax2.set_title(f"{n}-Stream Scaling on a Single Shared GPU")
     ax2.set_ylim(0, n * 1.35)
     ax2.legend(fontsize=10)

@@ -240,7 +240,7 @@ def benchmark_pytorch(n_runs=200):
             latencies.append((time.perf_counter() - t) * 1000.0)
 
     latencies = np.array(latencies)
-    print(f"\n[PyTorch FP32]")
+    print("\n[PyTorch FP32]")
     print(f"  Mean : {latencies.mean():.2f} ms")
     print(f"  P50  : {np.percentile(latencies, 50):.2f} ms")
     print(f"  P90  : {np.percentile(latencies, 90):.2f} ms")
@@ -291,7 +291,7 @@ if __name__ == "__main__":
         return f"  {label:<28} {mean:>8.2f} {p99:>8.2f} {fps:>7.1f} {spdup:>7.2f}x"
 
     print(f"\n{'='*62}")
-    print(f"  Ablation Study — Table 5 업데이트 (TensorRT INT8 추가)")
+    print("  Ablation Study — Table 5 업데이트 (TensorRT INT8 추가)")
     print(f"{'='*62}")
     print(f"  {'설정':<28} {'Mean(ms)':>8} {'P99(ms)':>8} {'FPS':>7} {'vs FP32':>8}")
     print(f"  {'-'*60}")

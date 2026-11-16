@@ -30,7 +30,6 @@ yolov5s_calib.*
 # Editor / tool state
 .vscode/
 .idea/
-.claude/
 
 # OS
 Thumbs.db

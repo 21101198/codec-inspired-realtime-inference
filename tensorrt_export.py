@@ -3,7 +3,6 @@
 import torch
 import numpy as np
 import time
-import cv2
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -160,9 +159,8 @@ class TRTInference:
         print(f"[TRT] 엔진 로드 완료: {engine_path}")
 
     def infer(self, input_tensor):
-        import tensorrt as trt
         import pycuda.driver as cuda
-        import pycuda.autoinit
+        import pycuda.autoinit  # noqa: F401  (CUDA 컨텍스트 초기화용)
 
         input_np = input_tensor.cpu().numpy().astype(np.float32)
         output_shape = tuple(self.engine.get_binding_shape(1))
@@ -242,7 +240,7 @@ if __name__ == "__main__":
                     "fps":  round(1000/float(latencies.mean()), 1),
                 }
                 results.append(res4)
-                print(f"\n  [TensorRT FP16]")
+                print("\n  [TensorRT FP16]")
                 for k, v in res4.items():
                     if k != "label":
                         print(f"    {k:6}: {v}")

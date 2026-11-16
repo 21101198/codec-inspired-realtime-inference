@@ -3,7 +3,6 @@
 import cv2
 import torch
 import numpy as np
-import time
 import argparse
 import matplotlib
 matplotlib.use("Agg")
@@ -166,7 +165,6 @@ def analyze_and_plot(records, out_dir="."):
 
     frames = [r["frame_idx"] for r in records]
     iou_vals = [r["iou_match"] for r in records]
-    types = [r["frame_type"] for r in records]
 
     for r in records:
         if r["frame_type"] == "I":
@@ -392,7 +390,7 @@ if __name__ == "__main__":
 
     stats = analyze_and_plot(records, out_dir=args.output)
 
-    print(f"\n[Eval] 핵심 결과:")
+    print("\n[Eval] 핵심 결과:")
     print(f"  P-frame 평균 IoU Match: {stats['p_frame_mean_iou']*100:.1f}%")
     print(f"  완벽 일치 비율:          {stats['perfect_pct']:.1f}%")
     print(f"  허용 범위(IoU≥0.5):      {stats['ok_pct']+stats['perfect_pct']:.1f}%")

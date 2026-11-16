@@ -1,8 +1,6 @@
-import cv2, torch, numpy as np, time, collections
-from dataclasses import dataclass
-from typing import List, Deque
+import cv2, torch, numpy as np, time
 
-VIDEO = r"C:\Users\USER\OneDrive\Desktop\proj2\test_4k.mp4"
+VIDEO = "test_4k.mp4"
 N_FRAMES = 300
 
 print("Loading model...")
@@ -36,7 +34,6 @@ def infer_full(frame_bgr):
 def run_scs(frames, theta, w1=0.6, w2=0.4, max_streak=8):
     prev_gray = None
     last_conf = 1.0
-    last_boxes = []
     p_streak = 0
     times, i_count, p_count = [], 0, 0
 
@@ -55,7 +52,6 @@ def run_scs(frames, theta, w1=0.6, w2=0.4, max_streak=8):
             t0 = time.perf_counter()
             boxes, last_conf = infer_full(f)
             elapsed = (time.perf_counter() - t0) * 1000
-            last_boxes = boxes
             p_streak = 0
             i_count += 1
         else:
@@ -66,7 +62,6 @@ def run_scs(frames, theta, w1=0.6, w2=0.4, max_streak=8):
 
     arr = np.array(times)
     total = i_count + p_count
-    fps_approx = 1000 / (arr[arr > 0].mean()) * (i_count / total) if i_count > 0 else 0
     i_times = arr[arr > 0]
     total_time_ms = i_times.sum() if len(i_times) > 0 else 1
     real_fps = (total / total_time_ms) * 1000

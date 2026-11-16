@@ -83,13 +83,11 @@ def run_single(source, model, device, max_p_streak, max_frames=200,
 
         force_i = p_streak >= max_p_streak
         if force_i or scene_score >= threshold:
-            frame_type = "I"
             pred_boxes = gt_boxes
             last_boxes = gt_boxes
             p_streak = 0
             i_count += 1
         else:
-            frame_type = "P"
             pred_boxes = last_boxes
             p_streak += 1
             p_count += 1
@@ -117,7 +115,6 @@ def plot_tradeoff(results, baseline_fps, baseline_iou, out_dir="."):
     streaks  = [r["max_p_streak"] for r in results]
     fps_vals = [r["fps"] for r in results]
     iou_vals = [r["mean_iou"] for r in results]
-    i_ratios = [r["i_ratio"] for r in results]
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
@@ -208,7 +205,7 @@ if __name__ == "__main__":
         results.append(res)
         print(f"FPS={res['fps']:.1f}, IoU={res['mean_iou']:.1f}%, I-frame={res['i_ratio']:.1f}%")
 
-    print(f"  Baseline (all I-frame) 실험 중...", end=" ", flush=True)
+    print("  Baseline (all I-frame) 실험 중...", end=" ", flush=True)
     baseline = run_single(source, model, device, 0, args.frames)
     print(f"FPS={baseline['fps']:.1f}, IoU={baseline['mean_iou']:.1f}%")
 

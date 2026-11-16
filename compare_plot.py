@@ -273,7 +273,7 @@ if __name__ == "__main__":
     plot_fps_and_segments(base_rows, ours_rows, str(out_dir / "04_fps_segments.png"))
     print_summary(base_rows, ours_rows)
 
-    print(f"\n[Compare] 완료! 그래프 4개 저장됨:")
+    print("\n[Compare] 완료! 그래프 4개 저장됨:")
     print(f"  -> {out_dir}/01_tail_distribution.png")
     print(f"  -> {out_dir}/02_percentile_bar.png")
     print(f"  -> {out_dir}/03_timeline_compare.png")

@@ -19,7 +19,7 @@ from core import (
     CodecInspiredScheduler,
 )
 
-VIDEO_PATH = r"C:\Users\USER\OneDrive\Desktop\proj2\test_4k.mp4"
+VIDEO_PATH = "test_4k.mp4"
 MODEL_PATH_V5 = "yolov5s.pt"
 MODEL_PATH_V8 = "yolov8s.pt"
 CONF_THRESHOLD = 0.4

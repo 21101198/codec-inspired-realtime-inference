@@ -22,17 +22,22 @@ pipeline.py           # CLI 배치 실행 (cv2.imshow 기반 실시간 파이프
 pipeline_worker.py    # core.py 로직을 감싸는 QThread 워커 (PyQt6 대시보드용)
 main_window.py         # PyQt6 메인 윈도우 (비디오 프리뷰 + 실시간 통계 대시보드)
 model_loader.py        # YOLOv5 로더 (같은 폴더에 yolov5/ 코드가 있으면 오프라인으로 로드)
+object_level_scheduler.py  # 객체 단위 선택적 추론(OL-SCS, pipeline.py --mode object)
 
 baseline.py           # 기준(baseline) 성능 측정
 bench_4k.py           # 해상도별(360p/1080p/4K) 추론 속도 벤치마크
 bench_resolution_full.py  # 해상도별 Baseline vs I/P 스케줄러 동일조건 비교
 bench_scenarios.py    # 고속동작/저조도/군중 3개 시나리오 영상 다운로드 + Baseline vs I/P 벤치마크
+bench_multistream.py  # GPU 1개로 1/4 스트림 동시 처리 비교 (스마트팩토리 시나리오)
+bench_yolov8_compare.py   # YOLOv5s vs YOLOv8s 모델 독립성 비교
 optimize_4k.py         # scene-change threshold(theta) 스윕 최적화
 weight_optimizer.py   # SceneChangeDetector 가중치(w1/w2) 최적화
 accuracy_eval.py       # I/P 프레임 스케줄링의 탐지 정확도 영향 평가
 latency_analyzer.py    # latency 로그 CSV 분석
 tradeoff_analysis.py   # 속도-정확도 트레이드오프 분석
 compare_plot.py         # 결과 비교 시각화
+compare_resolution_plot.py  # 해상도별 결과 그래프
+plot_object_mode_compare.py # 프레임 단위 vs 객체 단위 스케줄링 비교 그래프
 
 tensorrt_export.py     # PyTorch -> ONNX -> TensorRT 변환
 trt_build.py           # TensorRT 엔진 빌드
@@ -48,7 +53,8 @@ TENSORRT_INT8_ANALYSIS.md  # Build Tools 없이 TensorRT INT8 구현 분석 + �
 
 > `*.pt` / `*.onnx` / `*.engine` 모델 파일과 `test_4k.mp4` 등 대용량 미디어 파일은
 > 저장소 용량 문제로 `.gitignore`에서 제외되어 있습니다. 아래 설치 방법을 참고해
-> 직접 준비해주세요.
+> 직접 준비해주세요. 4K 벤치마크 스크립트(`bench_4k.py`, `bench_resolution_full.py` 등)는
+> 저장소 폴더에 있는 `test_4k.mp4`를 입력으로 사용합니다.
 
 ## 설치 방법
 

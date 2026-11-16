@@ -5,7 +5,6 @@ import torch
 import numpy as np
 import time
 import argparse
-import itertools
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -31,7 +30,6 @@ def run_experiment(source, model, device, w1, w2, threshold,
 
     prev_gray = None
     p_streak = 0
-    last_boxes = []
     last_conf = 1.0
 
     i_count = 0
@@ -72,7 +70,6 @@ def run_experiment(source, model, device, w1, w2, threshold,
             infer_ms = (time.perf_counter() - t_infer) * 1000.0
 
             dets = results.xyxy[0].cpu().numpy()
-            last_boxes = dets[:, :4].tolist() if len(dets) else []
             confs = dets[:, 4].tolist() if len(dets) else [1.0]
             last_conf = float(np.mean(confs)) if confs else 1.0
 
@@ -169,7 +166,7 @@ def plot_results(results, out_dir):
     ax = axes[1]
     bars1 = ax.bar(x - w/2, fps_vals2, w, label="FPS", color="#3B82F6", alpha=0.85)
     ax3 = ax.twinx()
-    bars2 = ax3.bar(x + w/2, ir_vals2, w, label="I-frame %", color="#EF4444", alpha=0.85)
+    ax3.bar(x + w/2, ir_vals2, w, label="I-frame %", color="#EF4444", alpha=0.85)
     ax.set_xticks(x)
     ax.set_xticklabels([f"w1={v}" for v in w1_vals], fontsize=10)
     ax.set_ylabel("FPS", fontsize=12, color="#3B82F6")
